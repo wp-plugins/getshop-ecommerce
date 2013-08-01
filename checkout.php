@@ -1,6 +1,6 @@
 <?
 global $api,$address;
-$webaddress = $address;
+$webaddress = getAddress(null);
 
 $address = new core_usermanager_data_Address();
 $address->address = @$_POST['address'];

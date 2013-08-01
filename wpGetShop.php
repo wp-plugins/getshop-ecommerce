@@ -37,7 +37,6 @@ include_once("events/API2.php");
 include_once("events/CommunicationHelper.php");
 
 $api = null;
-$address = getAddress(null);
 
 /**
  * @param type $address
@@ -51,11 +50,20 @@ function initialize_api($address) {
 }
 
 function getAddress($uuid) {
-    $address = get_option("getshop_address_" . $uuid);
-    if(!$address && $uuid != null) {
-        $api = initialize_api("www.getshop.com");
-        $address = $api->getGetShop()->findAddressForUUID($uuid);
-        add_option("getshop_address_" . $uuid, $address);
+    if ($uuid != null) {
+        $address = get_option("gs_" . $uuid);
+        if (!$address) {
+            $api = initialize_api("www.getshop.com");
+            $address = $api->getGetShop()->findAddressForUUID($uuid);
+            add_option("gs_" . $uuid, $address);
+            if (get_option("gs_main")) {
+                update_option("gs_main", $address);
+            } else {
+                add_option("gs_main", $address);
+            }
+        }
+    } else {
+        $address = get_option("gs_main");
     }
     initialize_api($address);
     return $address;
@@ -104,21 +112,19 @@ function remove_getshop() {
     wp_delete_post(get_option("checkout_page_id"));
     wp_delete_post(get_option("cart_page_id"));
     wp_delete_post(get_option("product_page_id"));
-    
+
     delete_option("checkout_page_id");
     delete_option("cart_page_id");
     delete_option("product_page_id");
     delete_option("getshop_address");
 }
 
-
-
 function view_product($atts) {
     if (isset($atts['id'])) {
         $uuid = trim($atts['id']);
         $address = getAddress($uuid);
         $prodid = get_option("product_id_" . $uuid);
-        if(!$prodid) {
+        if (!$prodid) {
             $api = initialize_api($address);
             $prodid = $api->getProductManager()->getProductFromApplicationId($uuid)->id;
             add_option("product_id_" . $uuid, $prodid);
@@ -163,7 +169,7 @@ function productlist($atts) {
         $content .= "<a href='?page_id=" . $pageId . "&productid=" . $product->id . "'>";
         $content .= "<div class='getshop_name'>" . $product->name . "</div>";
         $content .= "<span class='getshop_price'>" . $product->price . ",-</span>";
-        if($product->images) {
+        if ($product->images) {
             foreach ($product->images as $image) {
                 /* @var $image core_productmanager_data_ProductImage */
                 if ($image->type == 0) {
@@ -178,4 +184,5 @@ function productlist($atts) {
 
     echo $content;
 }
+
 ?>

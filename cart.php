@@ -3,7 +3,7 @@ global $api;
 
 
 $product_id = $_GET['product'];
-$address = getAddress($product_id);
+$address = getAddress(null);
 $pageId = $_GET['page_id'];
 
 $cartManager = $api->getCartManager();
@@ -12,6 +12,7 @@ $checkoutid = get_option("checkout_page_id");
 /* @var $api GetShopApi */
 if ($_GET['type'] == "add") {
 //    echo "adding to cart";
+    echo $product_id;
     $cartManager->addProduct($product_id, 1, array());
 } else if($_GET['type'] == "delete") {
     $cartManager->removeProduct($product_id);

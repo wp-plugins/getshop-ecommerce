@@ -17,7 +17,7 @@ $cartId = get_option("cart_page_id");
 
 echo "<div class='getshop_title'>";
 echo $product->name . " - " . $product->price . ",-";
-echo "<a href='?page_id=$cartId&product=$productid&type=add'><span class='getshop_buy_button gsbutton'>Add to cart</span></a>";
+echo "<a href='?page_id=$cartId&product=".$product->id."&type=add'><span class='getshop_buy_button gsbutton'>Add to cart</span></a>";
 echo "</div>";
 foreach ($product->images as $image) {
     /* @var $image core_productmanager_data_ProductImage */
