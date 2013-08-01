@@ -1,7 +1,7 @@
 <?php
 
 /*
-  Plugin Name: wpGetShop
+  Plugin Name: getshop-ecommerce
   Plugin URI: http://www.getshop.com
   Description: An integration plugin from GetShop
   Version: 1.0
@@ -9,13 +9,13 @@
   Author URI: http://www.getshop.com
   License: GPL
  */
-register_activation_hook(WP_PLUGIN_DIR . '/wpGetShop/wpGetShop.php', 'install_getshop');
-register_deactivation_hook(WP_PLUGIN_DIR . '/wpGetShop/wpGetShop.php', 'remove_getshop');
+register_activation_hook(WP_PLUGIN_DIR . '/getshop-ecommerce/wpGetShop.php', 'install_getshop');
+register_deactivation_hook(WP_PLUGIN_DIR . '/getshop-ecommerce/wpGetShop.php', 'remove_getshop');
 wp_enqueue_script('jquery');
-wp_enqueue_script('fancybox_script', WP_PLUGIN_URL . '/wpGetShop/lightbox/lightbox.js');
+wp_enqueue_script('fancybox_script', WP_PLUGIN_URL . '/getshop-ecommerce/lightbox/lightbox.js');
 
-wp_enqueue_style('fancybox_css', WP_PLUGIN_URL . '/wpGetShop/lightbox/lightbox.css');
-wp_enqueue_style('default_getshop_styles', WP_PLUGIN_URL . '/wpGetShop/defaultstyles.css');
+wp_enqueue_style('fancybox_css', WP_PLUGIN_URL . '/getshop-ecommerce/lightbox/lightbox.css');
+wp_enqueue_style('default_getshop_styles', WP_PLUGIN_URL . '/getshop-ecommerce/defaultstyles.css');
 
 session_start();
 add_shortcode('productlist', 'productlist');

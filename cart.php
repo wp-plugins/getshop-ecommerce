@@ -61,10 +61,10 @@ $total_amount = $cartManager->getCartTotalAmount();
         ?>
         <div class='getshop_product'>
             <div class='getshop_countcontainer'>
-                <a href='<? echo "?page_id=$pageId&type=delete&product=".$item->cartItemId; ?>'><span class='delete'><img src='<? echo WP_PLUGIN_URL;?>/wpGetShop/x.png'></span></a>
-                <a href='<? echo "?page_id=$pageId&increaseProduct=".$item->cartItemId; ?>'><span class='up'><img src='<? echo WP_PLUGIN_URL;?>/wpGetShop/arrow_up.png'></span></a>
+                <a href='<? echo "?page_id=$pageId&type=delete&product=".$item->cartItemId; ?>'><span class='delete'><img src='<? echo WP_PLUGIN_URL;?>/getshop-ecommerce/x.png'></span></a>
+                <a href='<? echo "?page_id=$pageId&increaseProduct=".$item->cartItemId; ?>'><span class='up'><img src='<? echo WP_PLUGIN_URL;?>/getshop-ecommerce/arrow_up.png'></span></a>
                 <? echo $item->count; ?>
-                <a href='<? echo "?page_id=$pageId&decreaseProduct=".$item->cartItemId; ?>'><span class='down'><img src='<? echo WP_PLUGIN_URL;?>/wpGetShop/arrow_down.png'></span></a>
+                <a href='<? echo "?page_id=$pageId&decreaseProduct=".$item->cartItemId; ?>'><span class='down'><img src='<? echo WP_PLUGIN_URL;?>/getshop-ecommerce/arrow_down.png'></span></a>
             </div>
             <img class='getshop_image' src='http://<? echo "$address/displayImage.php?id=$imgId"; ?>&width=150&height=150'>
             <div><a class='getshop_title' href='<? echo "?page_id=$viewid&productid=".$product->id; ?>&type=add'><? echo $product->name; ?></a></div>
