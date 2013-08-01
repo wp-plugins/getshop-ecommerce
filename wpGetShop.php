@@ -4,7 +4,7 @@
   Plugin Name: getshop-ecommerce
   Plugin URI: http://www.getshop.com
   Description: An integration plugin from GetShop
-  Version: 1.0
+  Version: 1.1
   Author: Boggibill
   Author URI: http://www.getshop.com
   License: GPL
