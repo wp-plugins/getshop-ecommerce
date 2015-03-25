@@ -1,5 +1,5 @@
 <?php
-class core_common_DataCommon {
+class core_common_DataCommon extends core_common_TranslationHandler  {
 	/** @var String */
 	public $id;
 
@@ -14,6 +14,9 @@ class core_common_DataCommon {
 
 	/** @var String */
 	public $rowCreatedDate;
+
+	/** @var String */
+	public $lastModified;
 
 }
 ?>

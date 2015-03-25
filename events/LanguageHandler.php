@@ -16,17 +16,21 @@ class LanguageHandler {
 
     public function getErrorMessage($errorCode) {
         $ret = null;
-        echo $errorCode;
-        if (($handle = fopen("../language/".$this->lang."/errors.csv", "r")) !== FALSE) {
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-                if ($data[0] == $errorCode) {
-                    $ret = $data[1];
-                    break;
+        echo "error code: " . $errorCode . "<br>";
+        if(file_exists("../language/".$this->lang."/errors.csv")) {
+            if (($handle = fopen("../language/".$this->lang."/errors.csv", "r")) !== FALSE) {
+                while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                    if ($data[0] == $errorCode) {
+                        $ret = $data[1];
+                        break;
+                    }
                 }
+                fclose($handle);
             }
-            fclose($handle);
+            return $ret;
+        } else {
+           return $errorCode;
         }
-        return $ret;
     }
 }
 

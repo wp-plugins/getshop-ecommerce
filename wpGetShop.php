@@ -11,17 +11,80 @@
  */
 register_activation_hook(WP_PLUGIN_DIR . '/getshop-ecommerce/wpGetShop.php', 'install_getshop');
 register_deactivation_hook(WP_PLUGIN_DIR . '/getshop-ecommerce/wpGetShop.php', 'remove_getshop');
-wp_enqueue_script('jquery');
-wp_enqueue_script('fancybox_script', WP_PLUGIN_URL . '/getshop-ecommerce/lightbox/lightbox.js');
 
-wp_enqueue_style('fancybox_css', WP_PLUGIN_URL . '/getshop-ecommerce/lightbox/lightbox.css');
+wp_deregister_script('jquery');
+wp_register_script('jquery',  WP_PLUGIN_URL . '/getshop-ecommerce/js/jquery.js');
+wp_enqueue_script('jquery');
+wp_enqueue_script('jqueryui', WP_PLUGIN_URL . '/getshop-ecommerce/js/imageuploader/js/vendor/jquery.ui.widget.js');
+
+wp_enqueue_script('fancybox_script', WP_PLUGIN_URL . '/getshop-ecommerce/lightbox/js/lightbox.min.js');
+wp_enqueue_script('convertscript', WP_PLUGIN_URL . '/getshop-ecommerce/js/convert.js');
+wp_enqueue_script('imageuploadscript', WP_PLUGIN_URL . '/getshop-ecommerce/js/imageuploader/js/jquery.fileupload.js');
+
+wp_enqueue_style('fancybox_css', WP_PLUGIN_URL . '/getshop-ecommerce/js/imageuploader/css/style.css');
+wp_enqueue_style('fancybox_css', WP_PLUGIN_URL . '/getshop-ecommerce/js/imageuploader/css/jquery.fileupload.css');
+
+wp_enqueue_style('fancybox_css3', WP_PLUGIN_URL . '/getshop-ecommerce/lightbox/css/lightbox.css');
 wp_enqueue_style('default_getshop_styles', WP_PLUGIN_URL . '/getshop-ecommerce/defaultstyles.css');
 
 session_start();
-add_shortcode('productlist', 'productlist');
-add_shortcode('product', 'view_product');
+add_shortcode('gsproductlist', 'productlist');
+add_shortcode('gsproduct', 'view_product');
 add_shortcode('cart', 'view_cart');
 add_shortcode('checkout', 'view_checkout');
+add_filter('admin_footer_text', 'admin_footer_text', 1);
+add_action('admin_menu', 'fwds_plugin_settings');
+
+function getshopSettings($links) {
+    $settings_link = '<a href="admin.php?page=ge-settings">settings</a>';
+    array_unshift($links, $settings_link);
+    return $links;
+}
+
+$plugin = plugin_basename(__FILE__);
+add_filter("plugin_action_links_$plugin", 'getshopSettings');
+
+add_action( 'wp_ajax_addImageToProductAction', 'addImageCallback' );
+add_action( 'wp_ajax_removeImageFromProductAction', 'removeImageFromProductCallback' );
+
+function removeImageFromProductCallback() {
+    $imageId = $_POST['imageId'];
+    $productId = $_POST['productId'];
+    $api = initialize_api();
+    $product = $api->getProductManager()->getProduct($productId);
+    
+    $existingImages = $product->imagesAdded;
+    $newImageArray = array();
+    foreach($existingImages as $img) {
+        if($img == $imageId) {
+            continue;
+        }
+        $newImageArray[] = $img;
+    }
+    $product->imagesAdded = $newImageArray;
+    
+    $api->getProductManager()->saveProduct($product);
+}
+
+function addImageCallback() {
+    $files = $_POST['files'];
+    $productId = $_POST['productId'];
+    $api = initialize_api();
+    $product = $api->getProductManager()->getProduct($productId);
+    
+    foreach($files as $file) {
+        $product->imagesAdded[] = $file;
+    }
+    $api->getProductManager()->saveProduct($product);
+    print_images_on_product($product->imagesAdded);
+    wp_die();
+}
+
+function print_images_on_product($images) {
+    foreach($images as $image) {
+        echo "<span class='imagecontainer'><i id='".$image."'>X</i><img src='http://www.getshop.com/displayImage.php?id=" . $image . "'></span>";
+    }    
+}
 
 function __autoload($class_name) {
     $filepath = str_replace("_", "/", $class_name);
@@ -42,31 +105,67 @@ $api = null;
  * @param type $address
  * @return \GetShopApi
  */
-function initialize_api($address) {
+function initialize_api() {
     global $api;
-    $api = new GetShopApi(21, "www.getshop.com");
-    $api->getStoreManager()->initializeStore($address, session_id());
+    $sessionId = session_id();
+    $api = new GetShopApi(3224, "www.getshop.com", $sessionId);
+
+    $webAddress = get_site_url();
+    $webAddress = str_replace("http://", "", $webAddress);
+    $webAddress = str_replace("https://", "", $webAddress);
+    $admin_email = get_settings('admin_email');
+
+    $store = $api->getStoreManager()->initializeStore($webAddress, $sessionId);
+    $password = randomGetShopPassword();
+    $user_info = get_userdata(1);
+    if (!$store) {
+        $store = $api->getStoreManager()->createStore($webAddress, $admin_email, $password, true);
+        $api->getStoreManager()->initializeStore($webAddress, $sessionId);
+        $user = new core_usermanager_data_User();
+        $user->emailAddress = $admin_email;
+        $user->username = $admin_email;
+        $user->password = $password;
+        $user->fullName = $user_info->data->user_nicename;
+        $api->getUserManager()->createUser($user);
+    }
+
+    if (is_admin()) {
+        $user = $api->getUserManager()->getLoggedOnUser();
+        if (!$user) {
+            $api->getUserManager()->logOn($admin_email, $password);
+        }
+    }
+
     return $api;
 }
 
-function getAddress($uuid) {
-    if ($uuid != null) {
-        $address = get_option("gs_" . $uuid);
-        if (!$address) {
-            $api = initialize_api("www.getshop.com");
-            $address = $api->getGetShop()->findAddressForUUID($uuid);
-            add_option("gs_" . $uuid, $address);
-            if (get_option("gs_main")) {
-                update_option("gs_main", $address);
-            } else {
-                add_option("gs_main", $address);
-            }
-        }
-    } else {
-        $address = get_option("gs_main");
+function randomGetShopPassword() {
+    if (get_option("getshop_password")) {
+        return get_option("getshop_password");
     }
-    initialize_api($address);
-    return $address;
+    
+    $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789";
+    $pass = array(); //remember to declare $pass as an array
+    $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+    for ($i = 0; $i < 8; $i++) {
+        $n = rand(0, $alphaLength);
+        $pass[] = $alphabet[$n];
+    }
+    $password = implode($pass); //turn the array into a string
+    add_option("getshop_password", $password);
+}
+
+function admin_footer_text($footer_text) {
+    return "If you like <strong>GetShop eCommerce</strong> please leave us a 5 star rating, or provide us with feedback to make it a five star plugin. A huge thank you from GetShop in advance!";
+}
+
+function getShopAdminPage() {
+    $api = initialize_api();
+    include_once("getshopadminpage.php");
+}
+
+function fwds_plugin_settings() {
+    add_menu_page('getShopAdminPage', 'GetShop Settings', 'administrator', 'ge-settings', 'getShopAdminPage');
 }
 
 function install_getshop() {
@@ -120,16 +219,16 @@ function remove_getshop() {
 }
 
 function view_product($atts) {
+    $api = initialize_api();
+
     if (isset($atts['id'])) {
         $uuid = trim($atts['id']);
-        $address = getAddress($uuid);
         $prodid = get_option("product_id_" . $uuid);
         if (!$prodid) {
-            $api = initialize_api($address);
-            $prodid = $api->getProductManager()->getProductFromApplicationId($uuid)->id;
+            $prodid = $api->getProductManager()->getProduct($uuid)->id;
             add_option("product_id_" . $uuid, $prodid);
         }
-        $_GET['productid'] = $prodid;
+        $_GET['productid'] = $uuid;
     }
     echo "<div class='productview'>";
     require('productview.php');
@@ -149,13 +248,12 @@ function view_cart() {
 }
 
 function productlist($atts) {
-    global $api;
+    $api = initialize_api();
     $id = $atts['id'];
     if (!$id) {
         echo "Id settings is incorrect";
         return;
     }
-    $address = getAddress($id);
     $pageId = get_option("product_page_id");
     $criteria = new core_productmanager_data_ProductCriteria();
     $criteria->listId = $id;
@@ -173,7 +271,7 @@ function productlist($atts) {
             foreach ($product->images as $image) {
                 /* @var $image core_productmanager_data_ProductImage */
                 if ($image->type == 0) {
-                    $content .= "<img class='getshop_image' src='http://" . $address . "/displayImage.php?id=" . $image->fileId . "&width=100&height=100'>";
+                    $content .= "<img class='getshop_image' src='https://www.getshop.com/displayImage.php?id=" . $image->fileId . "&width=100&height=100'>";
                 }
             }
         }

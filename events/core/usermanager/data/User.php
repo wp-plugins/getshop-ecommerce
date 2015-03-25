@@ -3,6 +3,9 @@ class core_usermanager_data_User extends core_common_DataCommon  {
 	/** @var String */
 	public $resetCode;
 
+	/** @var String */
+	public $privileges;
+
 	/** @var core_usermanager_data_Address */
 	public $address;
 
@@ -11,6 +14,9 @@ class core_usermanager_data_User extends core_common_DataCommon  {
 
 	/** @var String */
 	public $emailAddress;
+
+	/** @var String */
+	public $emailAddressToInvoice;
 
 	/** @var String */
 	public $password;
@@ -40,6 +46,9 @@ class core_usermanager_data_User extends core_common_DataCommon  {
 	public $cellPhone;
 
 	/** @var String */
+	public $comments;
+
+	/** @var String */
 	public $key;
 
 	/** @var String */
@@ -47,6 +56,27 @@ class core_usermanager_data_User extends core_common_DataCommon  {
 
 	/** @var String */
 	public $hasChrome;
+
+	/** @var String */
+	public $referenceKey;
+
+	/** @var String */
+	public $isPrivatePerson;
+
+	/** @var String */
+	public $mvaRegistered;
+
+	/** @var core_usermanager_data_Company */
+	public $company;
+
+	/** @var String */
+	public $customerId;
+
+	/** @var String */
+	public $applicationAccessList;
+
+	/** @var String */
+	public $appId;
 
 	/** @var String */
 	public $groups;

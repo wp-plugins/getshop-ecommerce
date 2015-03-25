@@ -22,6 +22,9 @@ class core_appmanager_data_ApplicationSettings extends core_common_DataCommon  {
 	public $isPublic;
 
 	/** @var String */
+	public $isResponsive;
+
+	/** @var String */
 	public $price;
 
 	/** @var String */
@@ -43,7 +46,13 @@ class core_appmanager_data_ApplicationSettings extends core_common_DataCommon  {
 	public $pageSingelton;
 
 	/** @var String */
+	public $hasDashBoard;
+
+	/** @var String */
 	public $allowedStoreIds;
+
+	/** @var String */
+	public $apiCallsInUse;
 
 }
 ?>

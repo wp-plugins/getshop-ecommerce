@@ -1,5 +1,5 @@
 <?php
-class core_listmanager_data_Entry {
+class core_listmanager_data_Entry extends core_common_TranslationHandler  {
 	/** @var String */
 	public $navigateByPages;
 
@@ -28,7 +28,19 @@ class core_listmanager_data_Entry {
 	public $productId;
 
 	/** @var String */
+	public $fontAwsomeIcon;
+
+	/** @var String */
+	public $counter;
+
+	/** @var String */
 	public $subentries;
+
+	/** @var String */
+	public $pageType;
+
+	/** @var String */
+	public $uniqueId;
 
 }
 ?>

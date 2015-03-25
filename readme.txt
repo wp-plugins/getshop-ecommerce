@@ -1,10 +1,10 @@
 === GetShop ecommerce ===
 Contributors: Boggibill
-Donate link: 
+Donate link: http://www.getshop.com
 Tags: 
 Requires at least: 3.3
-Tested up to: 3.5.1
-Stable tag: 1.2
+Tested up to: 4.1.1
+Stable tag: 1.3
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,10 +15,10 @@ GetShop ecommerce is a plugin to import all products / product lists from you Ge
 GetShop ecommerce helps you sell you products using a wordpress site. It is super easy to install and start using. All you have to do is activate this plugin and use the two different shortcodes.
 
 Example for importing a product list:
-[productlist id="6c7eb8ff-bf92-4622-814b-19523919c24f"]
+[gsproductlist id="6c7eb8ff-bf92-4622-814b-19523919c24f"]
 
 Example for importing a product:
-[product id="37209802-6426-4a0f-a795-f4a429f4cc00"]
+[gsproduct id="37209802-6426-4a0f-a795-f4a429f4cc00"]
 
 It integrates into most designs and our goal is to have it working for all of them, so let us know if it looks bad in any cases.
 

@@ -13,6 +13,7 @@ class CommunicationHelper {
     var $port = 25554;
     public $errorCodes = array();
     public $host = "";
+    public $sessionId = "";
     
     private function getClass($array) {
         if (!is_array($array) || !isset($array['className'])) {
@@ -49,9 +50,10 @@ class CommunicationHelper {
         if ($this->connected) {
             return;
         }
-        
+        file_put_contents("/tmp/test.txt", "");
         $this->socket = @fsockopen($this->host, $this->port, $erstr, $errno, 120);
         if (!$this->socket) {
+            header("HTTP/1.0 500 Internal server error");
             echo "This page is down for maintance, please come back later.";
             exit(0);
         }
@@ -104,10 +106,9 @@ class CommunicationHelper {
     }
 
     public function sendMessage($event) {
-        $event["sessionId"] = session_id();
+        $event["sessionId"] = $this->sessionId;
         $data = json_encode($event);
         $res = "";
-        $start = microtime(true);
         $this->connect();
         $len = fputs($this->socket, $data . "\n");
         if($len != strlen($data)+1) {
@@ -115,10 +116,7 @@ class CommunicationHelper {
             $this->errors[] = "failed on " . $data . " sent: " . $len . " size compared to : " . strlen($data)+1;
         }
         
-        $res = fgets($this->socket);
-        $stop = microtime(true);
-
-        $diff = $stop - $start;
+        $res = stream_get_line($this->socket, 10000000000000, "\n");
 
         $object = json_decode($res, false);
         if (json_last_error() != 0) {
@@ -143,11 +141,19 @@ class CommunicationHelper {
             $handler = new LanguageHandler();
             $result = array();
             $result['error'] = $object->errorCode . "," . $handler->getErrorMessage($object->errorCode);
+            $result['error_text'] = $handler->getErrorMessage($object->errorCode);
             $result['error_additional_info'] = $object->additionalInformation;
             $result['error_method'] = $event['method'];
             $result['interfaceName'] = $event['interfaceName'];
             $this->errors[] = $result;
             $this->errorCodes[] = $object->errorCode;
+            
+            if (isset($_POST['synchron'])) {
+                http_response_code(400);
+                echo json_encode($result);
+                die();
+            }
+            
             return null;
         } else {
             return $this->createThundashopObject($object);

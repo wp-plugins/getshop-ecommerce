@@ -6,10 +6,11 @@
 .productview .getshop_main_image { float: left; margin: 15px; }
 .productview .getshop_long_desc { clear:both; }
 .productview .long_desc .getshop_extended_title { margin-top: 10px; font-weight: bold; }
-.productview .getshop_short_desc { display:inline; }
-.productview .getshop_title { position:relative; height: 40px; }
+.productview .getshop_short_desc { display:inline-block; padding-top: 20px; }
+.productview .getshop_title { position:relative; }
 .productview .getshop_buy_button { position:absolute; right: 10px; padding: 5px; }
 .productview .getshop_subimages { clear:both; }
+.productview .getshop_sub_image { float:left; display:inline-block; margin: 3px; height: 80px; border: 0px !important; }
 
 .gsbutton {
     -moz-box-shadow:inset 0px 1px 0px 0px #ffffff !important;

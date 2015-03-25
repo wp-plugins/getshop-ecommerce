@@ -51,6 +51,21 @@ class core_storemanager_data_StoreConfiguration extends core_common_DataCommon  
 	/** @var String */
 	public $configurationFlags;
 
+	/** @var String */
+	public $colorTemplates;
+
+	/** @var String */
+	public $selectedColorTemplate;
+
+	/** @var String */
+	public $customCss;
+
+	/** @var String */
+	public $mobileImagePortrait;
+
+	/** @var String */
+	public $mobileImageLandscape;
+
 	/** @var core_storemanager_data_Colors */
 	public $colors;
 

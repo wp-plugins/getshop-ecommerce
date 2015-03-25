@@ -10,39 +10,34 @@ if (!isset($_GET['productid'])) {
 }
 
 $productid = $_GET['productid'];
-$address = getAddress($productid);
 
 $product = $api->getProductManager()->getProduct($productid);
 $cartId = get_option("cart_page_id");
 
 echo "<div class='getshop_title'>";
-echo $product->name . " - " . $product->price . ",-";
+echo "<h1>" . $product->name . " - " . $product->price . ",- ";
 echo "<a href='?page_id=$cartId&product=".$product->id."&type=add'><span class='getshop_buy_button gsbutton'>Add to cart</span></a>";
+echo "</h1>";
 echo "</div>";
-foreach ($product->images as $image) {
-    /* @var $image core_productmanager_data_ProductImage */
-    if ($image->type == 0) {
-        ?>
-        <a class="lightbox getshop_main_image" rel="group" 
-           href="http://<? echo $address . "/displayImage.php?id=" . $image->fileId; ?>" 
-           title="<? echo $image->imageDescription; ?>">
-            <img src="http://<? echo $address . "/displayImage.php?id=" . $image->fileId; ?>&width=250&height=250" alt="" />
-        </a>
-        <?
-    }
+foreach ($product->imagesAdded as $image) {
+    ?>
+    <a class="getshop_main_image" data-lightbox="image"
+       href="https://www.getshop.com/displayImage.php?id=<? echo $image; ?>"
+        ><img src="https://www.getshop.com/displayImage.php?id=<?echo $image; ?>&width=250&height=250" alt="" />
+    </a>
+    <?
+    break;
 }
 echo "<div class='getshop_short_desc'>" . $product->shortDescription . "</div>";
 echo "<div class='getshop_subimages'>";
-foreach ($product->images as $image) {
+foreach ($product->imagesAdded as $image) {
     /* @var $image core_productmanager_data_ProductImage */
-    if ($image->type != 0) {
-        ?>
-        <a class="lightbox getshop_main_image" rel="group" 
-           href="http://<? echo $address . "/displayImage.php?id=" . $image->fileId; ?>&width=800&height=800">
-            <img class='sub_image' src='http://<? echo $address; ?>/displayImage.php?id=<? echo $image->fileId; ?>&width=80&height=80'>
-        </a>
-        <?
-    }
+?>
+    <a class="getshop_sub_image" rel="group"  data-lightbox="image"
+       href="https://www.getshop.com/displayImage.php?id=<? echo $image; ?>&width=800&height=800">
+        <img class='sub_image' src='https://www.getshop.com/displayImage.php?id=<? echo $image; ?>&width=80&height=80'>
+    </a>
+    <?
 }
 echo "</div>";
 
@@ -54,9 +49,6 @@ if ($product->description) {
 }
 ?>
 
-<script>
-    $j = jQuery.noConflict();
-    $j(function() {
-        $j('.lightbox').lightBox({fixedNavigation: true});
-    });
-</script>
+<style>
+    .getshop_buy_button { float:right; } 
+</style>

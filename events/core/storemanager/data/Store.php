@@ -22,10 +22,28 @@ class core_storemanager_data_Store extends core_common_DataCommon  {
 	public $configuration;
 
 	/** @var String */
-	public $partnerId;
+	public $isVIS;
 
 	/** @var String */
-	public $isVIS;
+	public $isDeepFreezed;
+
+	/** @var String */
+	public $deepFreezePassword;
+
+	/** @var String */
+	public $premium;
+
+	/** @var String */
+	public $mobileApp;
+
+	/** @var String */
+	public $expiryDate;
+
+	/** @var String */
+	public $isTemplate;
+
+	/** @var core_usermanager_data_User */
+	public $registrationUser;
 
 }
 ?>

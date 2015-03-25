@@ -4,7 +4,16 @@ class core_calendarmanager_data_Entry {
 	public $attendees;
 
 	/** @var String */
+	public $dropDiploma;
+
+	/** @var String */
+	public $waitingList;
+
+	/** @var String */
 	public $otherDays;
+
+	/** @var String */
+	public $metaInfo;
 
 	/** @var String */
 	public $maxAttendees;
@@ -19,13 +28,31 @@ class core_calendarmanager_data_Entry {
 	public $needConfirmation;
 
 	/** @var String */
+	public $lockedForSignup;
+
+	/** @var String */
+	public $linkToPage;
+
+	/** @var String */
 	public $description;
 
 	/** @var String */
 	public $starttime;
 
 	/** @var String */
+	public $extraText;
+
+	/** @var core_calendarmanager_data_Location */
+	public $locationObject;
+
+	/** @var String */
+	public $locationId;
+
+	/** @var String */
 	public $location;
+
+	/** @var String */
+	public $locationExtended;
 
 	/** @var String */
 	public $stoptime;
@@ -41,6 +68,12 @@ class core_calendarmanager_data_Entry {
 
 	/** @var String */
 	public $color;
+
+	/** @var String */
+	public $eventHelder;
+
+	/** @var String */
+	public $comments;
 
 	/** @var String */
 	public $year;
